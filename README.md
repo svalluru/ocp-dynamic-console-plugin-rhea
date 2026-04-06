@@ -1,4 +1,4 @@
-# Rhea — Enterprise Administrator (OpenShift Console Dynamic Plugin)
+# Enterprise Administrator (OpenShift Console Dynamic Plugin)
 
 OpenShift **dynamic console plugin** that adds an **Enterprise Administrator** page under the **Administrator** perspective. It lists **projects** the user can access that contain at least one **Route** labeled `admin=rhea`, and shows **one tab per matching Route** in the selected project. Each tab embeds the app’s admin UI in an **iframe** (with an **Open in new window** link).
 
