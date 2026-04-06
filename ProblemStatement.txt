@@ -1,0 +1,3 @@
+In current scenario, if an architect wants to go around all the products web consoles for either managing / debugging or any purpose, they will need to go through multiple OCP cluster web consoles, go to their respective Projects->Routes and access the links.
+
+Considering the number of different products and their management and monitoring consoles, it’s hard to navigate across all of them and manage access across the teams.

@@ -1,0 +1,156 @@
+# Set image to your push location in the internal registry (change tag as needed).
+# Apply deploy/nginx.conf as a ConfigMap before this manifest (see deploy-openshift.sh).
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: rhea-enterprise-admin-plugin
+  namespace: rhea-console-plugin
+  labels:
+    app: rhea-enterprise-admin-plugin
+  annotations:
+    # OpenShift populates Secret rhea-plugin-serving-cert with tls.crt / tls.key for HTTPS.
+    service.beta.openshift.io/serving-cert-secret-name: rhea-plugin-serving-cert
+    service.alpha.openshift.io/serving-cert-secret-name: rhea-plugin-serving-cert
+spec:
+  ports:
+    - name: https
+      port: 8443
+      protocol: TCP
+      targetPort: 8443
+  selector:
+    app: rhea-enterprise-admin-plugin
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rhea-enterprise-admin-plugin
+  namespace: rhea-console-plugin
+  labels:
+    app: rhea-enterprise-admin-plugin
+spec:
+  # One replica is easier to stabilize; scale up: oc scale deployment/rhea-enterprise-admin-plugin --replicas=2
+  replicas: 1
+  progressDeadlineSeconds: 600
+  # With replicas: 1, Recreate avoids two ReplicaSets stuck at 0/1 during a bad rollout.
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: rhea-enterprise-admin-plugin
+  template:
+    metadata:
+      labels:
+        app: rhea-enterprise-admin-plugin
+    spec:
+      # Shorter than default 30s — static nginx exits quickly on SIGTERM; avoids long "old replicas pending termination".
+      terminationGracePeriodSeconds: 15
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      # OpenShift can create the Secret before tls.crt/tls.key are non-empty; nginx then exits on SSL load.
+      initContainers:
+        # Same image as main: avoids ImagePullBackOff on clusters that cannot pull registry.access.redhat.com.
+        # deploy scripts' sed replaces every image: line with INTERNAL_IMAGE.
+        - name: wait-for-serving-cert
+          image: image-registry.openshift-image-registry.svc:5000/rhea-console-plugin/rhea-enterprise-admin-plugin:v0.0.1
+          imagePullPolicy: Always
+          command:
+            - /bin/sh
+            - -c
+            - |
+              echo "waiting for non-empty tls.crt and tls.key (up to ~4m)"
+              i=0
+              while [ "$i" -lt 120 ]; do
+                if [ -s /cert/tls.crt ] && [ -s /cert/tls.key ]; then
+                  echo "serving cert ready"
+                  exit 0
+                fi
+                i=$((i + 1))
+                sleep 2
+              done
+              echo "timeout: rhea-plugin-serving-cert not populated" >&2
+              ls -la /cert 2>&1 || true
+              exit 1
+          volumeMounts:
+            - name: serving-cert
+              readOnly: true
+              mountPath: /cert
+          resources:
+            requests:
+              cpu: 10m
+              memory: 32Mi
+            limits:
+              memory: 64Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            runAsNonRoot: true
+      containers:
+        - name: console-plugin
+          image: image-registry.openshift-image-registry.svc:5000/rhea-console-plugin/rhea-enterprise-admin-plugin:v0.0.1
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+              name: http
+              protocol: TCP
+            - containerPort: 8443
+              name: https
+              protocol: TCP
+          volumeMounts:
+            - name: serving-cert
+              readOnly: true
+              mountPath: /var/serving-cert
+            - name: nginx-conf
+              readOnly: true
+              mountPath: /etc/nginx/nginx.conf
+              subPath: nginx.conf
+          resources:
+            requests:
+              cpu: 10m
+              memory: 50Mi
+            limits:
+              memory: 512Mi
+          # Startup/liveness: nginx is up. Readiness: real plugin assets exist (console needs this).
+          startupProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            periodSeconds: 2
+            timeoutSeconds: 2
+            failureThreshold: 30
+          readinessProbe:
+            httpGet:
+              path: /plugin-manifest.json
+              port: 8080
+            initialDelaySeconds: 0
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 6
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 30
+            timeoutSeconds: 3
+            failureThreshold: 3
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            runAsNonRoot: true
+      volumes:
+        - name: serving-cert
+          secret:
+            secretName: rhea-plugin-serving-cert
+            defaultMode: 420
+        - name: nginx-conf
+          configMap:
+            name: rhea-enterprise-admin-plugin-nginx
+            defaultMode: 420

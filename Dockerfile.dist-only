@@ -1,0 +1,10 @@
+# Use after: npm ci && npm run build on the host (native CPU).
+# Final image is still multi-arch via: podman build --platform linux/amd64 ...
+# See Dockerfile (final stage) for path rationale.
+FROM registry.access.redhat.com/ubi9/nginx-120:latest
+COPY dist/ /usr/share/nginx/html/
+COPY dist/ /opt/app-root/src/
+RUN test -f /usr/share/nginx/html/plugin-manifest.json \
+  || (echo "error: run NODE_ENV=production npm run build first; dist/plugin-manifest.json is required" >&2; exit 1)
+USER 1001
+ENTRYPOINT ["nginx", "-g", "daemon off;"]

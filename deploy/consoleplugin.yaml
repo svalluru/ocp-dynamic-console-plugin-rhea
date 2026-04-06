@@ -1,0 +1,15 @@
+# metadata.name must equal consolePlugin.name in package.json (rhea-enterprise-admin).
+apiVersion: console.openshift.io/v1
+kind: ConsolePlugin
+metadata:
+  name: rhea-enterprise-admin
+spec:
+  displayName: Red Hat Enterprise Administrator
+  backend:
+    type: Service
+    service:
+      name: rhea-enterprise-admin-plugin
+      namespace: rhea-console-plugin
+      # Console proxies plugin assets over HTTPS using the Service Serving certificate.
+      port: 8443
+      basePath: /

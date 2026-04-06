@@ -1,0 +1,194 @@
+/* Prefix classes to avoid collisions with other console plugins. */
+
+.rhea-enterprise-admin {
+  --rhea-rh-red: var(--pf-t--global--color--status--danger--default, #c9190b);
+  --rhea-blue: var(--pf-t--global--color--brand--default, #0066cc);
+}
+
+.rhea-enterprise-admin__masthead {
+  padding-bottom: var(--pf-t--global--spacer--md);
+}
+
+.rhea-enterprise-admin__brand-title {
+  color: var(--rhea-rh-red) !important;
+  font-weight: var(--pf-t--global--font--weight--body--bold) !important;
+}
+
+.rhea-enterprise-admin__shell {
+  display: flex;
+  min-height: 480px;
+  border: 1px solid var(--pf-t--global--border--color--default);
+  border-radius: var(--pf-t--global--border--radius--small);
+  overflow: hidden;
+  background: var(--pf-t--global--background--color--primary--default);
+}
+
+.rhea-enterprise-admin__sidebar {
+  width: 200px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: var(--pf-t--global--spacer--md) var(--pf-t--global--spacer--sm);
+  background: var(--pf-t--global--background--color--secondary--default);
+  border-right: 1px solid var(--pf-t--global--border--color--default);
+}
+
+.rhea-enterprise-admin__alert {
+  margin-bottom: var(--pf-t--global--spacer--sm);
+}
+
+.rhea-enterprise-admin__field-label--with-spinner {
+  display: flex;
+  align-items: center;
+  gap: var(--pf-t--global--spacer--xs);
+}
+
+.rhea-enterprise-admin__spinner {
+  margin-left: var(--pf-t--global--spacer--xs);
+}
+
+.rhea-enterprise-admin__field-label {
+  font-size: var(--pf-t--global--font--size--xs);
+  font-weight: var(--pf-t--global--font--weight--body--bold);
+  color: var(--pf-t--global--text--color--subtle);
+  text-transform: uppercase;
+  margin-bottom: var(--pf-t--global--spacer--xs);
+}
+
+.rhea-enterprise-admin__sidebar-actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pf-t--global--spacer--sm);
+}
+
+.rhea-enterprise-admin__sidebar-btn {
+  width: 100%;
+  text-align: left;
+}
+
+.rhea-enterprise-admin__main {
+  flex: 1;
+  min-width: 0;
+  min-height: 480px;
+  display: flex;
+  flex-direction: column;
+  background: var(--pf-t--global--background--color--secondary--default);
+  padding: var(--pf-t--global--spacer--md);
+}
+
+.rhea-enterprise-admin__console {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  gap: var(--pf-t--global--spacer--sm);
+}
+
+.rhea-enterprise-admin__console-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--pf-t--global--spacer--sm);
+}
+
+.rhea-enterprise-admin__console-service-meta {
+  font-size: var(--pf-t--global--font--size--sm);
+  color: var(--pf-t--global--text--color--subtle);
+}
+
+.rhea-enterprise-admin__console-open-link {
+  flex-shrink: 0;
+}
+
+.rhea-enterprise-admin__console-iframe {
+  flex: 1;
+  width: 100%;
+  min-height: 420px;
+  border: 1px solid var(--pf-t--global--border--color--default);
+  border-radius: var(--pf-t--global--border--radius--small);
+  background: var(--pf-t--global--background--color--primary--default);
+}
+
+.rhea-enterprise-admin__console-empty {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--pf-t--global--spacer--md);
+  max-width: 42rem;
+}
+
+.rhea-enterprise-admin__console-empty-desc {
+  margin: 0;
+  color: var(--pf-t--global--text--color--subtle);
+  font-size: var(--pf-t--global--font--size--sm);
+}
+
+.rhea-enterprise-admin__console-loading {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--pf-t--global--spacer--md);
+}
+
+.rhea-enterprise-admin__console-loading-text {
+  font-size: var(--pf-t--global--font--size--sm);
+  color: var(--pf-t--global--text--color--subtle);
+}
+
+.rhea-enterprise-admin__product-tabs {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  gap: 0;
+  overflow-x: auto;
+  background: var(--pf-t--global--background--color--secondary--default);
+  border-bottom: 1px solid var(--pf-t--global--border--color--default);
+}
+
+.rhea-enterprise-admin__product-tab.is-placeholder {
+  cursor: default;
+  opacity: 0.85;
+}
+
+.rhea-enterprise-admin__product-tab {
+  appearance: none;
+  border: none;
+  border-right: 1px solid var(--pf-t--global--border--color--default);
+  border-top: 3px solid transparent;
+  padding: var(--pf-t--global--spacer--sm) var(--pf-t--global--spacer--lg);
+  font: inherit;
+  font-size: var(--pf-t--global--font--size--sm);
+  cursor: pointer;
+  background: var(--pf-t--global--palette--black-200, #d2d2d2);
+  color: var(--pf-t--global--text--color--regular);
+}
+
+.rhea-enterprise-admin__product-tab:hover {
+  background: var(--pf-t--global--background--color--secondary--default);
+}
+
+.rhea-enterprise-admin__product-tab.is-active {
+  background: var(--pf-t--global--background--color--primary--default);
+  border-top-color: var(--rhea-blue);
+  font-weight: var(--pf-t--global--font--weight--body--bold);
+  color: var(--pf-t--global--text--color--regular);
+}
+
+.rhea-enterprise-admin__product-tab:last-child {
+  border-right: none;
+}
+
+@media (max-width: 768px) {
+  .rhea-enterprise-admin__shell {
+    flex-direction: column;
+  }
+
+  .rhea-enterprise-admin__sidebar {
+    width: 100%;
+  }
+}
