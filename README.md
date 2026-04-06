@@ -4,6 +4,9 @@ OpenShift **dynamic console plugin** that adds an **Enterprise Administrator** p
 
 The plugin talks to the cluster through the same APIs as the rest of the console (`k8sListItems`, `k8sGet` from `@openshift-console/dynamic-plugin-sdk`), so your OpenShift RBAC applies.
 
+<img width="931" height="641" alt="image" src="https://github.com/user-attachments/assets/69c6aeb3-8fb5-400c-a8fd-6d88603b2375" />
+
+
 ## Requirements
 
 - OpenShift 4.x with the **dynamic plugin** stack enabled
